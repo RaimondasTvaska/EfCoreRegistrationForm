@@ -2,10 +2,7 @@
 using EfCoreRegistrationForm.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace EfCoreRegistrationForm.Controllers
 {
@@ -26,35 +23,31 @@ namespace EfCoreRegistrationForm.Controllers
             };
             return View(regForm);
         }
-        public IActionResult Edit(int id)
+        public IActionResult FillForm(int id)
         {
-            var registrationForm = _context.QuestionAnswers.Include(c => c.Question).
+            var regForm = _context.QuestionAnswers.Include(c => c.Question).
                 ThenInclude(q => q.Options).FirstOrDefault(r => r.RegistrationId == id);
             var RegistrationFormDto = new RegistrationFormDto()
             {
 
             };
 
-            return View(registrationForm);
+            return View(RegistrationFormDto);
         }
         [HttpPost]
-        public IActionResult Edit(BrokerCreate brokerCreate)
+        public IActionResult FillForm(RegistrationFormDto registrationForm)
         {
-            var tmpRng = _context.CompanyBrokers.Where(b => b.BrokerId == brokerCreate.Broker.Id);
-            _context.CompanyBrokers.RemoveRange(tmpRng);
-            if (brokerCreate.CompanyIds != null)
+            foreach (var question in registrationForm.QuestionAnswers)
             {
-                foreach (var companyId in brokerCreate.CompanyIds)
-                {
-                    var companyBroker = new CompanyBroker()
-                    {
-                        Broker = brokerCreate.Broker,
-                        CompanyId = companyId
-                    };
-                    _context.CompanyBrokers.Add(companyBroker);
-                }
+
+                _context.QuestionAnswers.Update(question);
             }
-            _context.Brokers.Update(brokerCreate.Broker);
+            //var tmpRng = _context.CompanyBrokers.Where(b => b.BrokerId == brokerCreate.Broker.Id);
+            //_context.CompanyBrokers.RemoveRange(tmpRng);
+            //if (brokerCreate.CompanyIds != null)
+            //{
+            //}
+
             _context.SaveChanges();
             return RedirectToAction("Index");
         }
