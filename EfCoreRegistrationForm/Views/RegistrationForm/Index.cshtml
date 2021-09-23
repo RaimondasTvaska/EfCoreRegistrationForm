@@ -20,7 +20,7 @@
             {
                 <tr>
                     <td>
-                        @question.Question
+                        @question.Question.Name
                     </td>
                     <td>
                         @Html.HiddenFor(aq => aq.RegistrationId)
@@ -28,7 +28,8 @@
 
                     <td>
                         <div class="disabled">
-                            @Html.DropDownListFor(a => question.AnswerId, new SelectList(question.Question.Options), "Id", "Text");
+                            @Html.DropDownListFor(a => question.AnswerId, new SelectList(question.Question.Options, "Id", "Text"),
+                            new { @class = "form-control dropdown" })
 
                         </div>
                     </td>

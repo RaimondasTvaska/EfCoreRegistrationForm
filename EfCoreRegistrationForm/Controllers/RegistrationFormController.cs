@@ -19,11 +19,11 @@ namespace EfCoreRegistrationForm.Controllers
 
             var regForm = new RegistrationFormDto()
             {
-                QuestionAnswers = _context.QuestionAnswers.ToList()
+                QuestionAnswers = _context.QuestionAnswers.Include(a => a.Question).ThenInclude(a => a.Options).ToList()
             };
             return View(regForm);
         }
-        public IActionResult FillForm(int id)
+        public IActionResult FormUpdate(int id)
         {
             var regForm = _context.QuestionAnswers.Include(c => c.Question).
                 ThenInclude(q => q.Options).FirstOrDefault(r => r.RegistrationId == id);
@@ -35,7 +35,7 @@ namespace EfCoreRegistrationForm.Controllers
             return View(RegistrationFormDto);
         }
         [HttpPost]
-        public IActionResult FillForm(RegistrationFormDto registrationForm)
+        public IActionResult FormUpdate(RegistrationFormDto registrationForm)
         {
             foreach (var question in registrationForm.QuestionAnswers)
             {
