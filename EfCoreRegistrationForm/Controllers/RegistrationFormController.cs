@@ -16,10 +16,24 @@ namespace EfCoreRegistrationForm.Controllers
         }
         public IActionResult Index()
         {
+            var questionsWithAnswersIds = _context.QuestionAnswers.Select(s => s.QuestionId).ToList();
+
+            var questionsWithNoAnswers = _context.Questions.Include(q => q.Options).Where(q => !questionsWithAnswersIds.Contains(q.Id)).ToList();
+
+            var questionAnswers = _context.QuestionAnswers.Include(qa => qa.Question).ThenInclude(q => q.Options).Include(qa => qa.Answer).ToList();
+
+            foreach (var question in questionsWithNoAnswers)
+            {
+                questionAnswers.Add(new Models.QuestionAnswer()
+                {
+                    Question = question,
+                    QuestionId = question.Id
+                });
+            }
 
             var regForm = new RegistrationFormDto()
             {
-                QuestionAnswers = _context.QuestionAnswers.Include(a => a.Question).ThenInclude(a => a.Options).ToList()
+                QuestionAnswers = questionAnswers
             };
             return View(regForm);
         }
