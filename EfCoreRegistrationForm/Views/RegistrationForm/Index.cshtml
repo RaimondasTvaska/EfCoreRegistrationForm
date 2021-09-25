@@ -3,43 +3,87 @@
 @{
     ViewData["Title"] = "Index";
 }
+@using (Html.BeginForm("UpdateForm", "RegistrationForm", FormMethod.Post))
+{
 
-<div class="container">
+    <div class="container">
 
-    <h3 class="mb-5"> Registracijos požymiai</h3>
+        <h3 class="mb-5"> Registracijos požymiai</h3>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Registracijos požymiai</th>
-                <th scope="col">Reikšmė</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var question in @Model.QuestionAnswers)
-            {
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        @question.Question.Name
-                    </td>
-                    <td>
-                        @Html.HiddenFor(aq => aq.RegistrationId)
-                    </td>
-
-                    <td>
-                        <div class="disabled">
-                            @Html.DropDownListFor(a => question.AnswerId, new SelectList(question.Question.Options, "Id", "Text"),
-                            new { @class = "form-control dropdown" })
-
-                        </div>
-                    </td>
+                    <th scope="col">Registracijos požymiai</th>
+                    <th scope="col">Reikšmė</th>
                 </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.QuestionAnswers.Count; i++)
+                {
+                    <tr>
+                        <td>
+                            @Model.QuestionAnswers[i].Question.Name
+                        </td>
+
+                        @Html.HiddenFor(aq => aq.RegistrationId)
+
+
+                        <td>
+                            <div class="disabled">
+                                @Html.DropDownListFor(a => Model.QuestionAnswers[i].AnswerId, new SelectList(Model.QuestionAnswers[i].Question.Options, "Id", "Text"),
+                                new { @class = "disabled" })
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @*@foreach (var question in @Model.QuestionAnswers)
+                    {
+                        <tr>
+                            <td>
+                                @question.Question.Name
+                            </td>
+                            <td>
+                                @Html.HiddenFor(aq => aq.RegistrationId)
+                            </td>
+
+                            <td>
+                                <div class="disabled">
+                                    @Html.DropDownListFor(a => question.AnswerId, new SelectList(question.Question.Options, "Id", "Text"),
+                                    new { @class = "disabled" })
+
+                                </div>
+                            </td>
+                        </tr>
+                    }*@
+            </tbody>
+        </table>
+
+        <button id="edit" type="button" class="bg-primary">Koreguoti požymius</button>
+        <button class="disabled badge-info" type="submit" disabled>Saugoti pataisymus</button>
+        <button id="reset" class="disabled" type="reset" disabled>Atšaukti pataisymus</button>
+
+        <script>
+            var form = document.getElementById('form');
+            var editButton = document.getElementById('edit');
+            var resetButton = document.getElementById('reset');
+            var initDisabledElements = document.getElementsByClassName('disabled');
+
+
+            for (var element of initDisabledElements) {
+
+                element.disabled = true;
+
             }
-        </tbody>
-    </table>
-    <div class="form-group">
-        <input type="button" value="Koreguoti požymius" class="btn-primary" id="b1" onclick="EnableButtons()" />
-        <input type="button" value="Saugoti pataisymus" class="btn-outline-secondary" id="b2" disabled />
-        <input type="button" value="Atšaukti pataisymus" class="btn-outline-secondary" id="b2" disabled />
+
+            editButton.addEventListener('click', function () {
+                for (var element of initDisabledElements) {
+                    element.disabled = false;
+                    editButton.disabled = true;
+                }
+            });
+
+        </script>
+
     </div>
-</div>
+}

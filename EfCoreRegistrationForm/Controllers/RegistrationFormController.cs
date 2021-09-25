@@ -37,30 +37,39 @@ namespace EfCoreRegistrationForm.Controllers
             };
             return View(regForm);
         }
-        public IActionResult FormUpdate(int id)
-        {
-            var regForm = _context.QuestionAnswers.Include(c => c.Question).
-                ThenInclude(q => q.Options).FirstOrDefault(r => r.RegistrationId == id);
-            var RegistrationFormDto = new RegistrationFormDto()
-            {
+        //public IActionResult EditForm(int id)
+        //{
+        //    var questionAnswers = _context.QuestionAnswers.Include(c => c.Question).
+        //        ThenInclude(q => q.Options);
 
-            };
+        //    if (id !=0)
+        //    {
+        //        questionAnswers.Where(r => r.RegistrationId == id);
+        //    }
 
-            return View(RegistrationFormDto);
-        }
+        //    var RegistrationFormDto = new RegistrationFormDto()
+        //    {
+        //        QuestionAnswers = questionAnswers.ToList()
+        //    };
+
+        //    return View(RegistrationFormDto);
+        //}
         [HttpPost]
-        public IActionResult FormUpdate(RegistrationFormDto registrationForm)
+        public IActionResult UpdateForm(RegistrationFormDto registrationForm)
         {
-            foreach (var question in registrationForm.QuestionAnswers)
-            {
 
-                _context.QuestionAnswers.Update(question);
+            if (registrationForm.RegistrationId != null)
+            {
+                foreach (var question in registrationForm.QuestionAnswers)
+                {
+
+                    _context.QuestionAnswers.Update(question);
+                }
+
             }
+
             //var tmpRng = _context.CompanyBrokers.Where(b => b.BrokerId == brokerCreate.Broker.Id);
             //_context.CompanyBrokers.RemoveRange(tmpRng);
-            //if (brokerCreate.CompanyIds != null)
-            //{
-            //}
 
             _context.SaveChanges();
             return RedirectToAction("Index");
